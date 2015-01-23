@@ -1,7 +1,12 @@
-<h2>Sales by Product</h2>
+<h2>Sales by Location</h2>
 <br>
+<% @jambu.each do |m, k, l| %>
+    <p><%= m["_id"] %></p>
+    <p><%= m["total"] %></p>
+    <hr>
+<% end %>
 <%= form_for(:posemails, url: vsales_product_choice_path, html: {method: 'get'}) do |f| %>
- <label>* Category</label> <%= f.select :category, kategori_choice, {include_blank: '---all cateory---'} %>
+  <label>* Category</label> <%= f.select :category, kategori_choice, {include_blank: '---All Category---'} %>
  <label>* Start Date</label> <input id="datetimepicker1" name="posemails[startdate]" type="text" data-date-format="YYYY/MM/DD">
  <label>* End Date</label> <input id="datetimepicker2" name="posemails[enddate]" type="text" data-date-format="YYYY/MM/DD">
 <%= f.submit 'search', class:"btn btn-primary btn-xs" %>
@@ -9,160 +14,132 @@
 <hr>
 <h3 class="text-center">Summary of Sales</h3>
 <% if @vsbp != nil %>
-<% if !@vsbp.empty? %>
+<% if !@vsbp.empty?%>
+<%= @kategori %>
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script src="http://code.highcharts.com/modules/exporting.js"></script>
-<h2 class="text-center"><%= @kategori %></h2>
-<div class="col-lg-12">
-        <div id="container"></div>  
-        <!-- <div id="container2" style="min-width: 310px; height: 400px; margin: 0 auto"></div>     -->
-</div>
-<div class="col-lg-12">
-        <!-- <div id="container"></div>  -->
-        <div id="container2" style="min-width: 310px; height: 400px; margin: 0 auto"></div> 
-</div>
-<div class="col-lg-12">
-        <!-- <div id="container"></div>  -->
-        <div id="container3" style="min-width: 310px; height: 400px; margin: 0 auto"></div> 
-</div>
 
-
+<div id="container5" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div class="col-lg-12">
+    <div class="col-lg-3">
+        
+    </div>
+    <div class="col-lg-3">
+        <h3>Total QtyUsed</h3><br>
+        <% total1 = 0 %>
+        <h2>
+        <% @vsbp.each do |k,l| %>
+            <% k %>
+            <% a = 0 %>
+            <% l.each do |n|%>
+                <% a += n["QtyUsed"].to_i %>
+            <% end %>
+            <% total1 += a %>
+        <% end %>
+        <%= total1 %> units
+        </h2>
+    </div>
+    <div class="col-lg-3">
+        <h3>Total QtyOrdered</h3><br>
+        <% total2 = 0 %>
+        <h2>
+        <% @vsbp.each do |k,l| %>
+            <% k %>
+            <% a = 0 %>
+            <% l.each do |n|%>
+                <% a += n["QtyOrdered"].to_i %>
+            <% end %>
+            <% total2+= a %>
+        <% end %>
+        <%= total2 %> units
+        </h2>
+    </div>
+    <div class="col-lg-3">
+        
+    </div>
+</div>
 <script type="text/javascript">
-    $(function () {
-
-    // Radialize the colors
-    Highcharts.getOptions().colors = Highcharts.map(Highcharts.getOptions().colors, function (color) {
-        return {
-            radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
-            stops: [
-                [0, color],
-                [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
-            ]
-        };
-    });
-
-    // Build the chart
-    $('#container').highcharts({
-        chart: {
-            plotBackgroundColor: null,
-            plotBorderWidth: null,
-            plotShadow: false
-        },
-        title: {
-            text: 'Product Quantity Shared <br> <%= "#{@end_date} - #{@start_date}" %> <br> Total : <% @total1 = 0 %> <% @vsbp.each do |id, prod| %> <% prod.map{|p| @total1+=p.QtyUsed.to_i } %>  <% end %> <%= @total1 %>'
-        },
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.y:.f} </b>'
-        },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                    style: {
-                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                    },
-                    connectorColor: 'silver'
-                }
-            }
-        },
-        series: [{
-            type: 'pie',
-            name: 'Quantity Used',
-            data: [
-                <% @vsbp.each do |id, prod| %>
-                ['<%= id %>',<% @p = 0 %> <% prod.map{|p| @p+=p.QtyUsed.to_i } %> <%= @p %> ],
-                <% end %>
-            ]
-        }]
-    });
- $('#container2').highcharts({
-        chart: {
-            plotBackgroundColor: null,
-            plotBorderWidth: null,
-            plotShadow: false
-        },
-        title: {
-            text: 'Product Quantity Ordered <br> <%= "#{@end_date} - #{@start_date} - " %> <br>Total : <% @total1 = 0 %> <% @vsbp.each do |id, prod| %> <% prod.map{|p| @total1+=p.QtyOrdered.to_i } %>  <% end %> <%= @total1 %>'
-        },
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.y:.f} </b>'
-        },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                    style: {
-                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                    },
-                    connectorColor: 'silver'
-                }
-            }
-        },
-        series: [{
-            type: 'pie',
-            name: 'Quantity Ordered',
-            data: [
-                <% @vsbp.each do |id, prod| %>
-                ['<%= id %>',<% @p = 0 %> <% prod.map{|p| @p+=p.QtyOrdered.to_i } %> <%= @p %> ],
-                <% end %>
-            ]
-        }]
-    });
-});
-
 $(function () {
-    $('#container3').highcharts({
-
+    $('#container5').highcharts({
         chart: {
             type: 'column'
         },
-
         title: {
-            text: 'Total Quantity consumtion, grouped by used <br> <%= "#{@end_date} - #{@start_date} " %>'
+            text: 'Sales by Branch'
         },
-
+        subtitle: {
+            text: 'Periode <%= @end_date %> - <%= @start_date %> '
+        },
         xAxis: {
-            categories: ['Quantity Shared', 'Quantity Ordered']
+            categories: [
+               <% @vsbp.each do |k,l| %>
+                    '<%= k %>',
+                <% end %>
+            ]
         },
-
-        yAxis: {
-            allowDecimals: false,
+        yAxis: [{
             min: 0,
             title: {
-                text: 'Number of units'
+                text: 'Employees'
             }
+        }, {
+            title: {
+                text: 'Profit (millions)'
+            },
+            opposite: true
+        }],
+        legend: {
+            shadow: false
         },
-
         tooltip: {
-            formatter: function () {
-                return '<b>' + this.x + '</b><br/>' + '<br/>' +
-                    'Total: ' + this.point.stackTotal;
-            }
+            shared: true
         },
-
         plotOptions: {
             column: {
-                stacking: 'normal'
+                grouping: false,
+                shadow: false,
+                borderWidth: 0
             }
         },
-
         series: [{
-            name: 'Total',
-            data: [<% @total1 = 0 %> <% @vsbp.each do |id, prod| %> <% prod.map{|p| @total1+=p.QtyUsed.to_i } %>  <% end %> <%= @total1 %>, <% @total1 = 0 %> <% @vsbp.each do |id, prod| %> <% prod.map{|p| @total1+=p.QtyOrdered.to_i } %>  <% end %> <%= @total1 %>],
-            stack: 'male'
-        },
-        ]
+            name: 'QtyUsed',
+            color: 'rgba(248,161,63,1)',
+            data: [<% @vsbp.each do |k,l| %>
+                    <% k %>
+                    <% a = 0 %>
+                    <% l.each do |n|%>
+                        <% a += n["QtyUsed"].to_i %>
+                    <% end %>
+                    <%= a %>,
+                <% end %>],
+            tooltip: {
+                valuePrefix: '',
+                valueSuffix: ' Unit'
+            },
+            pointPadding: 0.3,
+            pointPlacement: 0.2,
+            yAxis: 1
+        }, {
+            name: 'QtyOrdered',
+            color: 'rgba(186,60,61,.9)',
+            data: [<% @vsbp.each do |k,l| %>
+                    <% k %>
+                    <% a = 0 %>
+                    <% l.each do |n|%>
+                        <% a += n["QtyOrdered"].to_i %>
+                    <% end %>
+                    <%= a %>,
+                <% end %>],
+            tooltip: {
+                valuePrefix: '',
+                valueSuffix: ' Unit'
+            },
+            pointPadding: 0.4,
+            pointPlacement: 0.2,
+            yAxis: 1
+        }]
     });
 });
-
-
-
 
 </script>
 <% else %>

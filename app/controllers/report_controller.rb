@@ -25,7 +25,16 @@ class ReportController < ApplicationController
   end
 
   def vsales_product
-    
+    a = "50" 
+    @jambu = Vsale.collection.aggregate([
+        {"$match" => {"Category" => "Mika", "DateIssued" => {"$gte" => Time.parse('2013/01/01'), "$lt" =>  Time.parse('2014/01/20')}}},
+        { "$group" => {
+            "_id" => "$ShortDesc",
+            "total" => { "$sum" => "$QtyUsed" }
+        }},
+        { "$sort" => { "total" => -1 } },
+        {"$limit" => a.to_i}
+    ])
   end
 
   def vsales_product_choice

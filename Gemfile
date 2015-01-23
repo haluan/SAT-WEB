@@ -7,7 +7,6 @@ gem 'rails', '4.1.6'
 # gem 'sqlite3'
 # Use SCSS for stylesheets
 gem 'mongoid'
-gem 'mongoid-mapreduce'
 gem 'bson_ext'
 gem 'whenever', :require => false
 gem 'sass-rails', '~> 4.0.3'

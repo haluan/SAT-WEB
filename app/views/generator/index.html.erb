@@ -26,9 +26,9 @@
 		<td><%= @Vdate_last_db.to_date.strftime("%d %b %Y") %></td>
 		<td>
 			<% if @Vstatus %>
-				<a id="kliking" href="/posemail_gen" class="btn btn-primary btn-xs disabled" style="color: white;">Is up to date</a>
+				<a id="kliking2" href="/vsales_gen" class="btn btn-primary btn-xs disabled" style="color: white;">Is up to date</a>
 			<% else %>
-				<a id="kliking" href="/posemail_gen" class="btn btn-warning btn-xs" style="color: white;">Generate data</a>
+				<a id="kliking2" href="/vsales_gen" class="btn btn-warning btn-xs" style="color: white;">Generate data</a>
 			<% end %>
 		</td>
 	</tr>
@@ -38,5 +38,8 @@
 <script>
 $( "#kliking" ).click(function() {
 	  $("#kliking").text("Loading .....")
+ });
+$( "#kliking2" ).click(function() {
+	  $("#kliking2").text("Loading .....")
  });
 </script>

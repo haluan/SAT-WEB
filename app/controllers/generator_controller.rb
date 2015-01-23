@@ -30,7 +30,7 @@ class GeneratorController < ApplicationController
 		@Vdate_last_mongo = Vsale.all.no_timeout.batch_size(10000).order("DateIssued desc").first.DateIssued 
 	end
 
-	@Vstatus = (@Vdate_last_mongo.to_date.strftime("%d %b %Y") == @Vdate_last_db.to_date.strftime("%d %b %Y"))
+	@Vstatus = (@Vdate_last_mongo.to_date.strftime("%d %b %Y") == @Vdate_last_db.to_date.strftime("%d %b %Y")) if @Vdate_last_mongo != nil
   	
   end
 
