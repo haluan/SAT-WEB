@@ -1,0 +1,52 @@
+<% @vsbp.each do |id, prod| %>
+	<strong>Category</strong> : <%= id %> <% @p = 0 %> <% prod.map{|p| @p+=p.QtyUsed.to_i } %> <%= @p %>
+	<table class="table table-responsive">
+		<thead>
+			<th>KeyName</th>
+			<th>ShordtDesc</th>
+			<th>Brand Name</th>
+			<th>Product Satatus</th>
+			<th>Promo Code</th>
+			<th>Promo Desc</th>
+			<th>QtyOrder</th>
+			<th>QtyUsed</th>
+			<th>UnitPrice</th>
+			<th>TotalDiscount</th>
+			<th>Taxprice</th>
+			<th>PriceBeforeTax</th>
+			<th>Total Price</th>
+			<th>UnitPrice COGS</th>
+			<th>TotalDiscount COGS</th>
+			<th>TaxPrice COGS</th>
+			<th>PriceBeforeTax COGS</th>
+			<th>totalPrice COGS</th>
+
+		</thead>
+		<% prod.each do |p| %>
+			<tbody>
+			<tr>
+				<td><%= p.KeyName %></td>
+				<td><%= p.ShortDesc %></td>
+				<td><%= p.BrandName %></td>
+				<td><%= p.ProductStatus %></td>
+				<td><%= p.PromoCode %></td>
+				<td><%= p.PromoDesc %></td>
+				<td><%= p.Description %></td>
+				<td><%= p.QtyOrdered %></td>
+				<td><%= p.QtyUsed %></td>
+				<td><%= p.UnitPrice %></td>
+				<td><%= p.TotalDiscount %></td>
+				<td><%= p.TaxPrice %></td>
+				<td><%= p.PriceBeforeTax %></td>
+				<td><%= p.TotalPrice %></td>
+				<td><%= p.UnitPriceCOGS %></td>
+				<td><%= p.TotalDiscountCOGS %></td>
+				<td><%= p.TaxPriceCOGS %></td>
+				<td><%= p.PriceBeforeTaxCOGS %></td>
+				<td><%= p.TotalPriceCOGS %></td>
+			</tr>
+		</tbody>
+		<% end %>
+	</table>
+	<hr>
+<% end %>

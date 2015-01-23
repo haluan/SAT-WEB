@@ -1,0 +1,70 @@
+<%= form_for(:posemails, url: posemailchoice_path, html: {method: 'get'}) do |f| %>
+ <label>* Org..</label> <%= f.select :orgnama, organisasi_choice, {include_blank: '---all---'} %>
+ <label>* Start Date</label> <input id="datetimepicker1" name="posemails[startdate]" type="text" data-date-format="YYYY/MM/DD">
+ <label>* End Date</label> <input id="datetimepicker2" name="posemails[enddate]" type="text" data-date-format="YYYY/MM/DD">
+<%= f.submit 'search', class:"btn btn-primary btn-xs" %>
+<% end %>
+<hr>
+<div class="well">
+	<label>Nama Organisasi : </label> <%= @orgnama %><br>
+	<label>Periode : </label> <%= @end_date %> - <%= @start_date %>
+</div>
+
+<table class="table table-responsive table-hover">
+<thead>
+	<tr>
+		<th>Tanggal</th>
+		<th>Terproses</th>
+		<th>Blm. Diproses</th>
+		<th>Total</th>
+	</tr>
+</thead>
+<tbody>
+<% if @data.nil? or @data.count == 0 %>
+	<tr>
+		<td>Nothing to shown with the given data</td>
+	</tr>
+<% else %>
+	<% @data.each do |k, mail| %>
+	<tr style="background-color: grey; color: white;">
+		<td><strong>Kategori : </strong><%= k %></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	
+		<% mail.group_by{|p| p["AsalOrg"]}.each do |org, maila| %>
+			
+				<tr style="background-color: yellow; ">
+				<td>
+					<strong>Org. : </strong><%= org %>
+				</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				</tr>
+				<% maila.group_by{|k| k["DateReceived"]}.each do |x, l| %>
+				<% taruhlah = l.select{|hash| hash["Processed"] == false }.length %>
+				<tr style="<%= "background-color: red; color: white; font-style: bold;" if taruhlah > 0 %>">
+					<td><%= x %></td>
+					<td><%= l.select{|hash| hash["Processed"] == true }.length %></td>
+					<td><%= taruhlah %></td>
+					<td><%= l.length %></td>
+				</tr>
+				<% end %>
+			
+		<% end %>
+<% end %>	
+<% end %>
+</tbody>
+</table>
+ <script type="text/javascript">
+            $(function () {
+                $('#datetimepicker1').datetimepicker({
+                	pickTime: false
+                });
+                 $('#datetimepicker2').datetimepicker({
+                	pickTime: false
+                });
+            });
+        </script>

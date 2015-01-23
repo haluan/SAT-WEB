@@ -1,0 +1,41 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ *= require bootstrap-datetimepicker
+ *= require font-awesome
+ *= require_tree .
+ *= require_self
+ */
+.bg-vsales{
+	background-image: url("sales.png");
+	width: 310px;
+	height: 310px;
+}
+.centreso{
+	text-align: center; 
+	font-size: 25px;
+	position: absolute;
+    bottom: 50%;
+    right: 20%;
+    color: white;
+    text-shadow:
+   -1px -1px 0 #000,  
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+     1px 1px 0 #000;
+}
+
+.bg-email{
+	background-image: url("email.png");
+	width: 310px;
+	height: 310px;
+}

@@ -1,0 +1,25 @@
+  <div class="col-lg-12" style="padding: 30px;">
+  <div class="col-lg-3"></div>
+      <div class="well col-lg-5"  style="padding: 40px;color: grey;">
+        <div style="text-align: center">
+          <h1>
+            Sign In
+          </h1>
+          <hr>
+          <%= bootstrap_flash %>
+        </div>
+        <div class="row">
+          <%= form_for(:sessions, url: sessions_path) do |f| %>
+              <div class="field">
+                <%= f.text_field :sa, class:"form-control" %>
+              </div>
+              <div class="field">
+                <%= f.password_field :pass, class:"form-control" %>
+              </div>
+              <br>
+              <%= f.submit "Log In", class:"btn btn-primary" %>
+          <% end %>
+          <hr>
+        </div>
+      </div>
+  </div>

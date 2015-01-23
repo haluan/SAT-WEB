@@ -1,0 +1,42 @@
+<table class="table table-condesed">
+<thead>
+	<tr>
+		<th>Function</th>
+		<th>Last Date in System</th>
+		<th>Last Date in Database</th>
+		<th></th>
+	</tr>
+</thead>
+<tbody>
+	<tr>
+		<td>Posemail</td>
+		<td><%= @date_last_mongo.to_date.strftime("%d %b %Y") if @date_last_mongo %></td>
+		<td><%= @date_last_db.to_date.strftime("%d %b %Y") %></td>
+		<td>
+			<% if @status %>
+				<a id="kliking" href="/posemail_gen" class="btn btn-primary btn-xs disabled" style="color: white;">Is up to date</a>
+			<% else %>
+				<a id="kliking" href="/posemail_gen" class="btn btn-warning btn-xs" style="color: white;">Generate data</a>
+			<% end %>
+		</td>
+	</tr>
+	<tr>
+		<td>Penjualan</td>
+		<td><%= @Vdate_last_mongo.to_date.strftime("%d %b %Y") if @Vdate_last_mongo %></td>
+		<td><%= @Vdate_last_db.to_date.strftime("%d %b %Y") %></td>
+		<td>
+			<% if @Vstatus %>
+				<a id="kliking" href="/posemail_gen" class="btn btn-primary btn-xs disabled" style="color: white;">Is up to date</a>
+			<% else %>
+				<a id="kliking" href="/posemail_gen" class="btn btn-warning btn-xs" style="color: white;">Generate data</a>
+			<% end %>
+		</td>
+	</tr>
+</tbody>
+</table>
+
+<script>
+$( "#kliking" ).click(function() {
+	  $("#kliking").text("Loading .....")
+ });
+</script>

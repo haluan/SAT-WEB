@@ -1,0 +1,7 @@
+# development:
+#   adapter: sqlserver
+#   host: HALUAN-ISJ # used when dataserver is blank
+#   database: SAT_NEW
+#   username: sa
+#   password: z
+#   timeout: 50000000000

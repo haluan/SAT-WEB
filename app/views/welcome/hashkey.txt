@@ -1,0 +1,58 @@
+{"ProductID"=>1, "KeyName"=>"01MK1BB8520WH", "ShortDesc"=>"CSG MIKA 1 BB8520WH", "LongDesc"=>nil, "UOMID"=>1, "CategoryID"=>4, "Serialized"=>false, "SNPrefix"=>nil, "SNSuffix"=>nil, "MinimumStock"=>nil, "LeadTime"=>nil, "SafetyStock"=>nil, "Area"=>nil, "Length"=>nil, "Width"=>nil, "Height"=>nil, "Thickness"=>nil, "Weight"=>nil, "ScrapFactor"=>nil, "BPID"=>nil, "SNStart"=>nil, "Pseudo"=>false, "Residual"=>false, "RoundedQty"=>false, "PreShipment"=>false, "Purchased"=>true, "Produced"=>false, "Obsolete"=>false, "DateCreated"=>2011-07-12 19:59:33 +0700, "CreatedBy"=>"sa", "DateUpdated"=>nil, "UpdatedBy"=>nil, "FPTypeID"=>nil, "ReqAttribute"=>false, "LowestCost"=>nil, "AverageCost"=>nil, "HighestCost"=>nil, "CostIncludeScrap"=>false, "CostLastUpdate"=>nil, "LotSize"=>nil, "AvgUsage"=>nil, "NoCosting"=>false, "LocationID"=>1, "StorageID"=>nil, "BrandID"=>nil, "BrandTypeID"=>nil, "SubTypeID"=>nil, "ForSaleOnly"=>true, "SalesAccID"=>nil, "InventoryAccID"=>nil, "COGSAccID"=>nil, "StockAdjAccID"=>nil, "AssemblyAccID"=>nil, "ReadyStock"=>#<BigDecimal:7e0cd40,'0.0',9(18)>, "QtyReserved"=>#<BigDecimal:7e0ccc8,'0.0',9(18)>, "FIFOCOGS"=>#<BigDecimal:7e0cc50,'0.0',9(18)>, "AvgCOGS"=>#<BigDecimal:7e0cbd8,'0.0',9(18)>, "LIFOCOGS"=>#<BigDecimal:7e0cb60,'0.0',9(18)>, "Consumables"=>false, "UsageAccID"=>nil, "FixedAsset"=>false, "FixedAssetAccID"=>nil, "Active"=>true, "LastAvgCOGS"=>#<BigDecimal:7e0cae8,'0.0',9(18)>, "UnderQtyRate"=>#<BigDecimal:7e0ca70,'0.0',9(18)>, "OverQtyRate"=>#<BigDecimal:7e0c9f8,'0.0',9(18)>, "ShelfLife"=>nil, "AutoSN"=>false, "AutoSNFormat"=>nil, "UPC"=>nil, "LastProductStatusID"=>nil}
+
+
+coun_sql = "SELECT COUNT(ROW_NUM) FROM(SELECT ROW_NUMBER() OVER(ORDER BY a.ProductID, e.LocationID) "+
+ #  		"Row_Num, a.ProductID, a.KeyName, a.ShortDesc, g.BrandID, g.BrandName, b.CategoryID, "+
+ #  		" b.CategoryCode, b.Category, e.LocationID, e.LocationCode, e.Description, f.OrgID, f.OrgCode, f.OrgName, "+
+ #                " d.ProductStatusID, d.ProductStatusCode, d.ProductStatus  "+
+ #              " FROM (SELECT DISTINCT ProductID, LocationID FROM tStock WITH(NOLOCK)) st JOIN dbo.tLocations AS e "+
+ #              " WITH (NOLOCK) ON st.LocationID=e.LocationID LEFT JOIN "+
+ #                   "dbo.tOrg AS f WITH (NOLOCK) ON e.OrgID = f.OrgID JOIN "+
+ #                   "dbo.tProducts AS a WITH (NOLOCK) ON st.ProductID=a.ProductID LEFT JOIN "+
+ #                   "dbo.tCategory AS b WITH (NOLOCK) ON a.CategoryID = b.CategoryID LEFT JOIN "+
+ #       "(SELECT * FROM (SELECT ROW_NUMBER() OVER(PARTITION BY a.ProductID ORDER BY a.ProductStatusHistoryID DESC) RowNum, "+
+ #                          "a.ProductStatusHistoryID, a.ProductID, c.ProductStatusID, c.ProductStatusCode, c.ProductStatus, "+
+ #                         " CAST(a.DateUpdated AS DATE) AS DateBegin, "+
+ #                          "CAST(ISNULL(MIN(b.DateUpdated), GETDATE()) AS DATE) AS DateEnd "+
+ #                       "FROM dbo.tProductStatusHistory AS a WITH (NOLOCK) LEFT JOIN "+
+ #                          "(SELECT ProductStatusHistoryID, ProductID, ProductStatusID, DateUpdated "+
+ #                          "FROM dbo.tProductStatusHistory AS a WITH (NOLOCK)) AS b ON a.ProductID = b.ProductID "+
+	# 						"AND a.DateUpdated <= b.DateUpdated AND "+
+ #                             " a.ProductStatusHistoryID <> b.ProductStatusHistoryID INNER JOIN "+
+ #                          "dbo.tProductStatus AS c WITH (NOLOCK) ON c.ProductStatusID = a.ProductStatusID "+
+ #                          "GROUP BY a.ProductStatusHistoryID, a.ProductID, c.ProductStatusID, c.ProductStatusCode, "+
+ #                           "c.ProductStatus, a.DateUpdated)a WHERE a.RowNum=1) AS d ON a.ProductID = d.ProductID LEFT JOIN "+
+ #                  " dbo.tBrand AS g WITH (NOLOCK) ON a.BrandID = g.BrandID "+
+ #               " WHERE (a.Active = 1) AND f.Active=1) a"
+
+
+
+
+<% (1..@coun).each do |i| %>
+	<% i = ((i*50)-50)+1 %>
+	<%= link_to i, root_path(id: i) %>
+<% end %>
+<ul>
+<% @results.each do |f| %>
+	<li>
+		<strong>Product ID</strong> <%= f["ProductID"] %>
+		<br><strong>Key Name</strong> <%= f["KeyName"] %>
+		<br><strong>Short Desc</strong> <%= f["ShortDesc"] %>
+		<br><strong>Brand ID</strong> <%= f["BrandID"] %>
+		<br><strong>Brand Name</strong> <%= f["BrandName"] %>
+		<br><strong>Category ID</strong> <%= f["CategoryID"] %>
+		<br><strong>Category COde</strong> <%= f["CategoryCode"] %>
+		<br><strong>Category</strong> <%= f["Category"] %>
+		<br><strong>Location ID</strong> <%= f["LocationID"] %>
+		<br><strong>Location Code</strong> <%= f["LocationCode"] %>
+		<br><strong>Description</strong> <%= f["Description"] %>
+		<br><strong>Org ID</strong> <%= f["OrgID"] %>
+		<br><strong>Org Code</strong> <%= f["OrgCode"] %>
+		<br><strong>Org Name</strong> <%= f["OrgName"] %>
+		<br><strong>Product Status ID</strong> <%= f["ProductStatusID"] %>
+		<br><strong>Product Status Code</strong> <%= f["ProductStatusCode"] %>
+		<br><strong>Product Status</strong> <%= f["ProductStatus"] %>
+	</li>
+	<hr>
+<% end %>
+</ul>
