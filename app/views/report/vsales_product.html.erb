@@ -143,12 +143,17 @@ $(function () {
                 }
             }
         },
+        tooltip: {
+            valueDecimals: 2,
+            valuePrefix: 'Rp. ',
+            valueSuffix: ' millions'
+        },
         series: [{
             type: 'pie',
-            name: 'Rp. ',
+            name: 'Value ',
             data: [
                <% @vsbp.each do |m, k, l| %>
-                ['<%= m["_id"] %>', <%= m["totalUsed"] %>],
+                ['<%= m["_id"] %>', <%= (m["totalUsed"]/1000000).round(2) %>],
             <% end %>
             ]
         }]

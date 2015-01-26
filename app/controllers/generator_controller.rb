@@ -35,10 +35,10 @@ class GeneratorController < ApplicationController
   end
 
   def category
-  	Category.all.map{|m| m.destroy! }
-  	Vsale.only(:Category).no_timeout.group_by(&:Category).map{|m, k| Category.create(name: m)}
-  	# Organisasi.all.map{|m| m.destroy! }
-  	# Posemail.only(:AsalOrg).no_timeout.group_by(&:AsalOrg).map{|m,k| Organisasi.create(name: m) }
+  	# Category.all.map{|m| m.destroy! }
+  	# Vsale.only(:Category).no_timeout.group_by(&:Category).map{|m, k| Category.create(name: m)}
+  	Organisasi.all.map{|m| m.destroy! }
+  	Posemail.only(:AsalOrg).no_timeout.group_by(&:AsalOrg).map{|m,k| Organisasi.create(name: m) }
   	redirect_to root_path
   end
 

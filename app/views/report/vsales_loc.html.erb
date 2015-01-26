@@ -3,54 +3,16 @@
 <%= form_for(:posemails, url: vsales_lochice_path, html: {method: 'get'}) do |f| %>
  <label>* Start Date</label> <input id="datetimepicker1" name="posemails[startdate]" type="text" data-date-format="YYYY/MM/DD">
  <label>* End Date</label> <input id="datetimepicker2" name="posemails[enddate]" type="text" data-date-format="YYYY/MM/DD">
+ <label>* Max. Row </label> <input id="top10" name="posemails[top10]" type="text" value="10">
 <%= f.submit 'search', class:"btn btn-primary btn-xs" %>
 <% end %>
 <hr>
-<h3 class="text-center">Summary of Sales</h3>
+<h3 class="text-center">Top Summary of Sales</h3>
 <% if @vsbloc != nil %>
 <% if !@vsbloc.empty?%>
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script src="http://code.highcharts.com/modules/exporting.js"></script>
-
 <div id="container5" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-<div class="col-lg-12">
-    <div class="col-lg-3">
-        
-    </div>
-    <div class="col-lg-3">
-        <h3>Total QtyUsed</h3><br>
-        <% total1 = 0 %>
-        <h2>
-        <% @vsbloc.each do |k,l| %>
-            <% k %>
-            <% a = 0 %>
-            <% l.each do |n|%>
-                <% a += n["QtyUsed"].to_i %>
-            <% end %>
-            <% total1 += a %>
-        <% end %>
-        <%= total1 %> units
-        </h2>
-    </div>
-    <div class="col-lg-3">
-        <h3>Total QtyOrdered</h3><br>
-        <% total2 = 0 %>
-        <h2>
-        <% @vsbloc.each do |k,l| %>
-            <% k %>
-            <% a = 0 %>
-            <% l.each do |n|%>
-                <% a += n["QtyOrdered"].to_i %>
-            <% end %>
-            <% total2+= a %>
-        <% end %>
-        <%= total2 %> units
-        </h2>
-    </div>
-    <div class="col-lg-3">
-        
-    </div>
-</div>
 <script type="text/javascript">
 $(function () {
     $('#container5').highcharts({
@@ -58,82 +20,56 @@ $(function () {
             type: 'column'
         },
         title: {
-            text: 'Sales by Branch'
+            text: 'Branch\'s biggest sales'
         },
         subtitle: {
-            text: 'Periode <%= @end_date %> - <%= @start_date %> '
+            text: 'Period : <%= @end_date %> - <%= @start_date %>'
         },
         xAxis: {
-            categories: [
-               <% @vsbloc.each do |k,l| %>
-                    '<%= k %>',
-                <% end %>
-            ]
+            type: 'category',
+            labels: {
+                rotation: -45,
+                style: {
+                    fontSize: '13px',
+                    fontFamily: 'Verdana, sans-serif'
+                }
+            }
         },
-        yAxis: [{
+        yAxis: {
             min: 0,
             title: {
-                text: 'Employees'
+                text: 'Rp (millions)'
             }
-        }, {
-            title: {
-                text: 'Profit (millions)'
-            },
-            opposite: true
-        }],
+        },
         legend: {
-            shadow: false
+            enabled: false
         },
         tooltip: {
-            shared: true
-        },
-        plotOptions: {
-            column: {
-                grouping: false,
-                shadow: false,
-                borderWidth: 0
-            }
+            pointFormat: ' Value : <b>Rp. {point.y:.1f} millions</b>'
         },
         series: [{
-            name: 'QtyUsed',
-            color: 'rgba(248,161,63,1)',
-            data: [<% @vsbloc.each do |k,l| %>
-                    <% k %>
-                    <% a = 0 %>
-                    <% l.each do |n|%>
-                        <% a += n["QtyUsed"].to_i %>
-                    <% end %>
-                    <%= a %>,
-                <% end %>],
-            tooltip: {
-                valuePrefix: '',
-                valueSuffix: ' Unit'
-            },
-            pointPadding: 0.3,
-            pointPlacement: 0.2,
-            yAxis: 1
-        }, {
-            name: 'QtyOrdered',
-            color: 'rgba(186,60,61,.9)',
-            data: [<% @vsbloc.each do |k,l| %>
-                    <% k %>
-                    <% a = 0 %>
-                    <% l.each do |n|%>
-                        <% a += n["QtyOrdered"].to_i %>
-                    <% end %>
-                    <%= a %>,
-                <% end %>],
-            tooltip: {
-                valuePrefix: '',
-                valueSuffix: ' Unit'
-            },
-            pointPadding: 0.4,
-            pointPlacement: 0.2,
-            yAxis: 1
+            name: 'Population',
+            data: [
+                <% @vsbloc.each do |id, m| %>
+                  ['<%= id["_id"] %>', <%= id["totalPrice"]/1000000 %>],
+                <% end %>
+            ],
+            dataLabels: {
+                enabled: true,
+                rotation: -90,
+                color: '#FFFFFF',
+                align: 'right',
+                x: 4,
+                y: 10,
+                style: {
+                    fontSize: '13px',
+                    fontFamily: 'Verdana, sans-serif',
+                    textShadow: '0 0 3px black'
+                }
+            }
         }]
     });
 });
-
 </script>
 <% else %>
 <div class="well">

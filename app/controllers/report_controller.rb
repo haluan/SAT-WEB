@@ -8,15 +8,24 @@ class ReportController < ApplicationController
     @tanggal_awal =  params[:posemails][:startdate]
     @tanggal_akhir =  params[:posemails][:enddate]
     @end_date =  params[:posemails][:startdate]
-
+    a = params[:posemails][:top10]
     if params[:posemails][:enddate].empty?
       @start_date = params[:posemails][:startdate]
     else
       @start_date = params[:posemails][:enddate]
     end
     
-    @vsbp = Vsale.only(:QtyUsed, :QtyOrdered, :Category, :DateIssued).no_timeout.batch_size(100000).where({:DateIssued=> {:$gte=> "#{@end_date}T00:00:00.000Z".to_date, :$lt=> (("#{@start_date}T00:00:00.000Z".to_date)+1)}}).group_by(&:Category)
-    
+    @vsbp = Vsale.collection.aggregate([
+        {"$match" => {"DateIssued" => {"$gte" => Time.parse(@end_date.to_s), "$lt" =>  Time.parse(@start_date.to_s)}}},
+        { "$group" => {
+            "_id" => "$Category",
+            "totalPrice" => { "$sum" => "$TotalPrice" },
+            "totalOrdered" => { "$sum" => "$QtyOrdered" },
+            "TotalPriceCOGS" => {"$sum" => "$UnitPrice"}
+        }},
+        { "$sort" => { "totalPrice" => -1 } },
+        {"$limit" => a.to_i}
+    ])
 
     @end_date = @end_date.to_date.strftime("%d %b %Y")
     @start_date = @start_date.to_date.strftime("%d %b %Y")
@@ -25,17 +34,7 @@ class ReportController < ApplicationController
   end
 
   def vsales_product
-    a = "10" 
-    @jambu = Vsale.collection.aggregate([
-        {"$match" => {"Category" => "Mika", "DateIssued" => {"$gte" => Time.parse('2013/01/01'), "$lt" =>  Time.parse('2014/01/20')}}},
-        { "$group" => {
-            "_id" => "$ShortDesc",
-            "total" => { "$sum" => "$TotalPrice" },
-            "total2" => { "$sum" => "$QtyOrdered" }
-        }},
-        { "$sort" => { "total" => -1 } },
-        {"$limit" => a.to_i}
-    ])
+    
   end
 
   def vsales_product_choice
@@ -89,11 +88,21 @@ class ReportController < ApplicationController
   end
 
   def vsales_year
-    @month = Vsale.group_by('DateIssued', 'month')
+    @month = Vsale.collection.aggregate(
+        {"$project" => {
+             "year" => {"$year" => "$DateIssued"}, 
+             "month" => {"$month" => "$DateIssued"},
+             "totalprice" => "$TotalPrice"
+        }},
+        {"$group" => {
+             "_id" => {"year" => "$year", "month" => "$month"}, 
+             "count" => {"$sum" => "$totalprice"}
+        }}
+    )
   end
 
   def vsales_loc
-    
+     
   end
 
   def vsales_lochice
@@ -101,6 +110,7 @@ class ReportController < ApplicationController
     @tanggal_awal =  params[:posemails][:startdate]
     @tanggal_akhir =  params[:posemails][:enddate]
     @end_date =  params[:posemails][:startdate]
+    a = params[:posemails][:top10]
 
     if params[:posemails][:enddate].empty?
       @start_date = params[:posemails][:startdate]
@@ -108,7 +118,15 @@ class ReportController < ApplicationController
       @start_date = params[:posemails][:enddate]
     end
 
-    @vsbloc = Vsale.only(:id, :QtyUsed, :QtyOrdered, :DateIssued, :OrgName).no_timeout.batch_size(1000000).where({:DateIssued=> {:$gte=> "#{@end_date}T00:00:00.000Z".to_date, :$lt=> (("#{@start_date}T00:00:00.000Z".to_date)+1)}}).group_by(&:OrgName)
+    @vsbloc = Vsale.collection.aggregate([
+        {"$match" => {"DateIssued" => {"$gte" => Time.parse(@end_date.to_s), "$lt" =>  Time.parse(@start_date.to_s)}}},
+        { "$group" => {
+            "_id" => "$OrgName",
+            "totalPrice" => { "$sum" => "$TotalPrice" }
+        }},
+        { "$sort" => { "totalPrice" => -1 } },
+        {"$limit" => a.to_i}
+    ])
 
     @end_date = @end_date.to_date.strftime("%d %b %Y")
     @start_date = @start_date.to_date.strftime("%d %b %Y")
