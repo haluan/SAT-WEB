@@ -59,7 +59,7 @@ class Vsale
   		pipeline = [
     		{"$match" => {"Category" => "'Mika'", "DateIssued" => {"$gte" => "ISODate('2013-01-01T00:00:00.0Z')", "$lt" => "ISODate('2013-02-01T00:00:00.0Z')"}}},
 		   {
-		       "$group" => {"_id" => "$ShortDesc", "total" => { "$sum" => "$QtyUsed" }, }
+		       "$group" => {"_id" => "$ShortDesc", "total" => { "$sum" => "'$QtyUsed'" }, }
 		   }
   		]
 

@@ -1,14 +1,10 @@
-<h2>Sales by Location</h2>
+<h2>Top Sales by Product</h2>
 <br>
-<% @jambu.each do |m, k, l| %>
-    <p><%= m["_id"] %></p>
-    <p><%= m["total"] %></p>
-    <hr>
-<% end %>
 <%= form_for(:posemails, url: vsales_product_choice_path, html: {method: 'get'}) do |f| %>
   <label>* Category</label> <%= f.select :category, kategori_choice, {include_blank: '---All Category---'} %>
  <label>* Start Date</label> <input id="datetimepicker1" name="posemails[startdate]" type="text" data-date-format="YYYY/MM/DD">
  <label>* End Date</label> <input id="datetimepicker2" name="posemails[enddate]" type="text" data-date-format="YYYY/MM/DD">
+ <label>* Max. Row </label> <input id="top10" name="posemails[top10]" type="text" value="10">
 <%= f.submit 'search', class:"btn btn-primary btn-xs" %>
 <% end %>
 <hr>
@@ -19,124 +15,179 @@
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script src="http://code.highcharts.com/modules/exporting.js"></script>
 
-<div id="container5" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="container2" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="container3" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <div class="col-lg-12">
-    <div class="col-lg-3">
-        
-    </div>
-    <div class="col-lg-3">
-        <h3>Total QtyUsed</h3><br>
-        <% total1 = 0 %>
-        <h2>
-        <% @vsbp.each do |k,l| %>
-            <% k %>
-            <% a = 0 %>
-            <% l.each do |n|%>
-                <% a += n["QtyUsed"].to_i %>
-            <% end %>
-            <% total1 += a %>
-        <% end %>
-        <%= total1 %> units
-        </h2>
-    </div>
-    <div class="col-lg-3">
-        <h3>Total QtyOrdered</h3><br>
-        <% total2 = 0 %>
-        <h2>
-        <% @vsbp.each do |k,l| %>
-            <% k %>
-            <% a = 0 %>
-            <% l.each do |n|%>
-                <% a += n["QtyOrdered"].to_i %>
-            <% end %>
-            <% total2+= a %>
-        <% end %>
-        <%= total2 %> units
-        </h2>
-    </div>
-    <div class="col-lg-3">
-        
-    </div>
 </div>
 <script type="text/javascript">
 $(function () {
-    $('#container5').highcharts({
+    $('#container').highcharts({
         chart: {
-            type: 'column'
+            zoomType: 'xy'
         },
         title: {
-            text: 'Sales by Branch'
+            text: 'Average Monthly Temperature and Rainfall in Tokyo'
         },
         subtitle: {
-            text: 'Periode <%= @end_date %> - <%= @start_date %> '
+            text: 'Source: WorldClimate.com'
         },
-        xAxis: {
-            categories: [
-               <% @vsbp.each do |k,l| %>
-                    '<%= k %>',
-                <% end %>
-            ]
-        },
-        yAxis: [{
-            min: 0,
+        xAxis: [{
+            categories: [ <% @vsbp.each do |m, k, l| %>
+                            '<%= m["_id"] %>', 
+                        <% end %>]
+        }],
+        yAxis: [{ // Primary yAxis
+            labels: {
+                format: '{value}',
+                style: {
+                    color: Highcharts.getOptions().colors[0]
+                }
+            },
             title: {
-                text: 'Employees'
+                text: 'Qty. Order (units)',
+                style: {
+                    color: Highcharts.getOptions().colors[0]
+                }
             }
-        }, {
+        }, { // Secondary yAxis
             title: {
-                text: 'Profit (millions)'
+                text: 'Value (Rp.)',
+                style: {
+                    color: Highcharts.getOptions().colors[1]
+                }
+            },
+            labels: {
+                format: '{value}',
+                style: {
+                    color: Highcharts.getOptions().colors[1]
+                }
             },
             opposite: true
         }],
-        legend: {
-            shadow: false
-        },
         tooltip: {
             shared: true
         },
+        legend: {
+            layout: 'vertical',
+            align: 'left',
+            x: 120,
+            verticalAlign: 'top',
+            y: 100,
+            floating: true,
+            backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+        },
+        series: [
+        {
+            name: 'Quantity',
+            type: 'column',
+            yAxis: 1,
+            data: [<% @vsbp.each do |m, k, l| %>
+                    <%= m["totalOrdered"] %>,
+                  <% end %>],
+            tooltip: {
+                valueSuffix: ' units'
+            }
+
+        }, {
+            name: 'Value',
+            type: 'spline',
+            data: [<% @vsbp.each do |m, k, l| %>
+                <%= m["totalUsed"] %>,
+            <% end %>],
+            tooltip: {
+                valuePrefix: 'Rp. '
+            }
+        }]
+    });
+});
+
+
+    $(function () {
+
+    // Radialize the colors
+    Highcharts.getOptions().colors = Highcharts.map(Highcharts.getOptions().colors, function (color) {
+        return {
+            radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+            stops: [
+                [0, color],
+                [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
+            ]
+        };
+    });
+
+    // Build the chart
+    $('#container3').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false
+        },
+        title: {
+            text: 'Category Value Shared <br> <%= "#{@start_date} - #{@end_date}" %> <br> Total : <% @total2 = 0 %> <% @vsbp.each do |m, k, l| %><% @total2 += m["totalUsed"] %><% end %> <%= number_to_currency(@total2,unit: "Rp", separator: ",", delimiter: ".") %>'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.y:.f} </b>'
+        },
         plotOptions: {
-            column: {
-                grouping: false,
-                shadow: false,
-                borderWidth: 0
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    },
+                    connectorColor: 'silver'
+                }
             }
         },
         series: [{
-            name: 'QtyUsed',
-            color: 'rgba(248,161,63,1)',
-            data: [<% @vsbp.each do |k,l| %>
-                    <% k %>
-                    <% a = 0 %>
-                    <% l.each do |n|%>
-                        <% a += n["QtyUsed"].to_i %>
-                    <% end %>
-                    <%= a %>,
-                <% end %>],
-            tooltip: {
-                valuePrefix: '',
-                valueSuffix: ' Unit'
-            },
-            pointPadding: 0.3,
-            pointPlacement: 0.2,
-            yAxis: 1
-        }, {
-            name: 'QtyOrdered',
-            color: 'rgba(186,60,61,.9)',
-            data: [<% @vsbp.each do |k,l| %>
-                    <% k %>
-                    <% a = 0 %>
-                    <% l.each do |n|%>
-                        <% a += n["QtyOrdered"].to_i %>
-                    <% end %>
-                    <%= a %>,
-                <% end %>],
-            tooltip: {
-                valuePrefix: '',
-                valueSuffix: ' Unit'
-            },
-            pointPadding: 0.4,
-            pointPlacement: 0.2,
-            yAxis: 1
+            type: 'pie',
+            name: 'Rp. ',
+            data: [
+               <% @vsbp.each do |m, k, l| %>
+                ['<%= m["_id"] %>', <%= m["totalUsed"] %>],
+            <% end %>
+            ]
+        }]
+    });
+
+ $('#container2').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false
+        },
+        title: {
+            text: 'Category Quantity Ordered <br> <%= "#{@start_date} - #{@end_date} - " %> <br>Total : <% @total2 = 0 %> <% @vsbp.each do |m, k, l| %><% @total2 += m["totalOrdered"] %><% end %> <%= @total2 %>'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.y:.f} </b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    },
+                    connectorColor: 'silver'
+                }
+            }
+        },
+        series: [{
+            type: 'pie',
+            name: 'Quantity Ordered',
+            data: [
+                 <% @vsbp.each do |m, k, l| %>
+                ['<%= m["_id"] %>', <%= m["totalOrdered"] %>],
+            <% end %>
+            ]
         }]
     });
 });
@@ -144,9 +195,10 @@ $(function () {
 </script>
 <% else %>
 <div class="well">
-   <label>Period : </label> <%= @end_date %> - <%= @start_date %>
+   <label>Period : </label> <%= @start_date %> - <%= @end_date %>
 </div>
 Nothing to show with the given data
+<%= @vsbp %>
 <% end %>
 <% else %>
 Please select Date Range first to show the data

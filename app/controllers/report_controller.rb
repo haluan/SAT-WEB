@@ -25,12 +25,13 @@ class ReportController < ApplicationController
   end
 
   def vsales_product
-    a = "50" 
+    a = "10" 
     @jambu = Vsale.collection.aggregate([
         {"$match" => {"Category" => "Mika", "DateIssued" => {"$gte" => Time.parse('2013/01/01'), "$lt" =>  Time.parse('2014/01/20')}}},
         { "$group" => {
             "_id" => "$ShortDesc",
-            "total" => { "$sum" => "$QtyUsed" }
+            "total" => { "$sum" => "$TotalPrice" },
+            "total2" => { "$sum" => "$QtyOrdered" }
         }},
         { "$sort" => { "total" => -1 } },
         {"$limit" => a.to_i}
@@ -38,9 +39,8 @@ class ReportController < ApplicationController
   end
 
   def vsales_product_choice
-    @tanggal_awal =  params[:posemails][:startdate]
-    @tanggal_akhir =  params[:posemails][:enddate]
-    @end_date =  params[:posemails][:startdate]
+   
+    a = params[:posemails][:top10]
 
     if params[:posemails][:category].empty?
       @kategori = nil
@@ -48,11 +48,8 @@ class ReportController < ApplicationController
       @kategori = params[:posemails][:category]
     end
 
-    if params[:posemails][:enddate].empty?
-      @start_date = params[:posemails][:startdate]
-    else
-      @start_date = params[:posemails][:enddate]
-    end
+    @start_date = params[:posemails][:startdate]
+    @end_date = params[:posemails][:enddate]
 
     if params[:posemails][:startdate].empty? and params[:posemails][:enddate].empty?
       @start_date = Date.today.strftime("%Y/%m/%d")
@@ -61,9 +58,27 @@ class ReportController < ApplicationController
 
     if @kategori.nil?
       @kategori = "ALL Category"
-      @vsbp = Vsale.only(:QtyUsed, :QtyOrdered, :ShortDesc ,:Category, :DateIssued).no_timeout.batch_size(100000).where({:DateIssued=> {:$gte=> "#{@end_date}T00:00:00.000Z".to_date, :$lt=> (("#{@start_date}T00:00:00.000Z".to_date)+1)}}).group_by(&:ShortDesc)
+      @vsbp = Vsale.collection.aggregate([
+        {"$match" => {"DateIssued" => {"$gte" => Time.parse(@start_date.to_s), "$lt" =>  Time.parse(@end_date.to_s)}}},
+        { "$group" => {
+            "_id" => "$ShortDesc",
+            "totalUsed" => { "$sum" => "$TotalPrice" },
+            "totalOrdered" => { "$sum" => "$QtyOrdered" }
+        }},
+        { "$sort" => { "totalUsed" => -1 } },
+        {"$limit" => a.to_i}
+    ])
     else
-      @vsbp = Vsale.only(:QtyUsed, :QtyOrdered, :ShortDesc ,:Category, :DateIssued).no_timeout.batch_size(100000).where(Category: @kategori ).where({:DateIssued=> {:$gte=> "#{@end_date}T00:00:00.000Z".to_date, :$lt=> (("#{@start_date}T00:00:00.000Z".to_date)+1)}}).group_by(&:ShortDesc)
+      @vsbp = Vsale.collection.aggregate([
+        {"$match" => {"Category" => "#{@kategori}", "DateIssued" => {"$gte" => Time.parse("#{@start_date}"), "$lt" =>  Time.parse("#{@end_date}")}}},
+        { "$group" => {
+            "_id" => "$ShortDesc",
+            "totalUsed" => { "$sum" => "$TotalPrice" },
+            "totalOrdered" => { "$sum" => "$QtyOrdered" }
+        }},
+        { "$sort" => { "totalUsed" => -1 } },
+        {"$limit" => a.to_i}
+    ])
     end    
 
     
