@@ -1,5 +1,9 @@
 class ReportController < ApplicationController
 	before_action :not_signedin?
+
+  def index
+    
+  end
   def vsales
     
   end
@@ -155,8 +159,10 @@ class ReportController < ApplicationController
       @end_date = params[:posemails][:startdate]
     end
     
-    if @end_date.empty? and @start_date.empty?
+    if (@end_date.empty? and @start_date.empty?)
       @data = Posemail.all.no_timeout.group_by(&:Status)
+    elsif @orgnama.empty?
+       @data = Posemail.only(:AsalOrg, :DateReceived, :Processed, :Status).where({:DateReceivedTemp=> {:$gte=> "#{@end_date}T00:00:00.000Z".to_date, :$lt=> (("#{@start_date}T00:00:00.000Z".to_date)+1)}}).no_timeout.batch_size(1000000).group_by(&:Status) 
     else
       @data = Posemail.only(:AsalOrg, :DateReceived, :Processed, :Status).where(AsalOrg: @orgnama).where({:DateReceivedTemp=> {:$gte=> "#{@end_date}T00:00:00.000Z".to_date, :$lt=> (("#{@start_date}T00:00:00.000Z".to_date)+1)}}).no_timeout.batch_size(1000000).group_by(&:Status)
       @end_date = @end_date.to_date.strftime("%d %b %Y")

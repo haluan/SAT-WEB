@@ -15,6 +15,12 @@
  *= require_tree .
  *= require_self
  */
+
+ a:hover{
+ 	text-decoration: none;
+ 	background-color: white;
+ 	color: #CF000F;
+ }
 .bg-vsales{
 	background-image: url("sales.png");
 	width: 310px;

@@ -46,7 +46,7 @@
 				<% maila.group_by{|k| k["DateReceived"]}.each do |x, l| %>
 				<% taruhlah = l.select{|hash| hash["Processed"] == false }.length %>
 				<tr style="<%= "background-color: red; color: white; font-style: bold;" if taruhlah > 0 %>">
-					<td><%= x %></td>
+					<td><%= x.to_date.strftime("%d %b %Y") %></td>
 					<td><%= l.select{|hash| hash["Processed"] == true }.length %></td>
 					<td><%= taruhlah %></td>
 					<td><%= l.length %></td>

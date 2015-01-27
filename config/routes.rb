@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   resources :generator, only: [:index]
+  resources :report, only: [:index]
 
   get 'cat_gen', to: "generator#category"
   get 'vsales_product', to: 'report#vsales_product'
