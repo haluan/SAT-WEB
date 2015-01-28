@@ -1,11 +1,13 @@
+<h2>Top Sales by Category</h2>
+<br>
 <%= form_for(:posemails, url: vsaleschoice_path, html: {method: 'get'}) do |f| %>
+ <label>* Based on :</label> <%= f.select :cond, [["Total Discount","TotalDiscount"],["Total Price","TotalPrice"],["Total Discount COGS","TotalDiscountCOGS"], ["Total Price COGS","TotalPriceCOGS"]] %>
  <label>* Start Date</label> <input id="datetimepicker1" name="posemails[startdate]" type="text" data-date-format="YYYY/MM/DD">
  <label>* End Date</label> <input id="datetimepicker2" name="posemails[enddate]" type="text" data-date-format="YYYY/MM/DD">
   <label>* Max. Row </label> <input id="top10" name="posemails[top10]" type="text" value="10">
 <%= f.submit 'search', class:"btn btn-primary btn-xs" %>
 <% end %>
 <hr>
-<h3 class="text-center">Summary of Sales</h3>
 <% if @vsbp != nil %>
 <% if !@vsbp.empty? %>
 <script src="http://code.highcharts.com/highcharts.js"></script>
@@ -21,10 +23,10 @@
             zoomType: 'xy'
         },
         title: {
-            text: 'Top Sales by Category'
+            text: 'Sales by Category'
         },
         subtitle: {
-            text: 'Period: <%= "#{@end_date} - #{@start_date}" %>'
+            text: 'Period: <%= "#{@end_date} - #{@start_date}" %> <br> Based on <%= @kondisi %> : <% @total2 = 0 %> <% @vsbp.each do |m, k, l| %><% @total2 += m["totalPrice"] %><% end %> <%= number_to_currency(@total2,unit: "Rp ", separator: ",", delimiter: ".") %>'
         },
         xAxis: [{
             categories: [<% @vsbp.each do |id, m| %> '<%= id["_id"] %>', <% end %>]
@@ -37,7 +39,7 @@
                 }
             },
             title: {
-                text: 'Total Price',
+                text: '<%= @cond %>',
                 style: {
                     color: Highcharts.getOptions().colors[1]
                 }
@@ -82,7 +84,7 @@
             }
 
         }, {
-            name: 'Total Price',
+            name: '<%= @kondisi %>',
             type: 'spline',
             data: [<% @vsbp.each do |id, m| %> <%= id["totalPrice"] %>, <% end %>],
             tooltip: {

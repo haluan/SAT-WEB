@@ -32,5 +32,6 @@ module SessionsHelper
   def sign_out
     user_sekarang = nil
     cookies.delete(:ingat_aku)
+    cookies.delete(:admin)
   end
 end

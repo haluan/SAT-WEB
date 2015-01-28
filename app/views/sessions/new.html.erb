@@ -11,10 +11,10 @@
         <div class="row">
           <%= form_for(:sessions, url: sessions_path) do |f| %>
               <div class="field">
-                <%= f.text_field :sa, class:"form-control" %>
+                <%= f.text_field :username, class:"form-control", placeholder: "username" %>
               </div>
               <div class="field">
-                <%= f.password_field :pass, class:"form-control" %>
+                <%= f.password_field :pass, class:"form-control", placeholder: "password" %>
               </div>
               <br>
               <%= f.submit "Log In", class:"btn btn-primary" %>

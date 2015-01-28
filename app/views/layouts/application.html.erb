@@ -64,6 +64,9 @@
                 Pos Email
               </a>
             </li>
+            <li>
+              <%= link_to "Generator", "/generator", style: "color: white" if cookies[:admin].to_i == 1   %>
+            </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li><%= link_to "sign in", "/signin", style:"color: white;" if !signed_in? %></li>
@@ -78,6 +81,7 @@
         <div class="col-lg-12">
           <%= bootstrap_flash %>
           <%= yield %>
+          
         </div>
       </div><!--/row-->
 

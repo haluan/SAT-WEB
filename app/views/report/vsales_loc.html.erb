@@ -1,13 +1,13 @@
-<h2>Sales by Location</h2>
+<h2>Top Sales by Location</h2>
 <br>
 <%= form_for(:posemails, url: vsales_lochice_path, html: {method: 'get'}) do |f| %>
+ <label>* Based on :</label> <%= f.select :cond, [["Total Discount","TotalDiscount"],["Total Price","TotalPrice"],["Total Discount COGS","TotalDiscountCOGS"], ["Total Price COGS","TotalPriceCOGS"]] %>  
  <label>* Start Date</label> <input id="datetimepicker1" name="posemails[startdate]" type="text" data-date-format="YYYY/MM/DD">
  <label>* End Date</label> <input id="datetimepicker2" name="posemails[enddate]" type="text" data-date-format="YYYY/MM/DD">
  <label>* Max. Row </label> <input id="top10" name="posemails[top10]" type="text" value="10">
 <%= f.submit 'search', class:"btn btn-primary btn-xs" %>
 <% end %>
 <hr>
-<h3 class="text-center">Top Summary of Sales</h3>
 <% if @vsbloc != nil %>
 <% if !@vsbloc.empty?%>
 <script src="http://code.highcharts.com/highcharts.js"></script>
@@ -20,10 +20,10 @@ $(function () {
             type: 'column'
         },
         title: {
-            text: 'Branch\'s biggest sales'
+            text: 'Branch\'s Top Sales'
         },
         subtitle: {
-            text: 'Period : <%= @end_date %> - <%= @start_date %>'
+            text: 'Period : <%= @end_date %> - <%= @start_date %> <br> Based on : <%= @kondisi %>'
         },
         xAxis: {
             type: 'category',
@@ -45,13 +45,13 @@ $(function () {
             enabled: false
         },
         tooltip: {
-            pointFormat: ' Value : <b>Rp. {point.y:.1f} millions</b>'
+            pointFormat: ' Value : <b>Rp. {point.y:.2f} millions</b>'
         },
         series: [{
             name: 'Population',
             data: [
                 <% @vsbloc.each do |id, m| %>
-                  ['<%= id["_id"] %>', <%= id["totalPrice"]/1000000 %>],
+                  ['<%= id["_id"] %>', <%= (id["totalPrice"]/1000000).round(2) %>],
                 <% end %>
             ],
             dataLabels: {

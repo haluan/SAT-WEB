@@ -13,6 +13,7 @@ class ReportController < ApplicationController
     @tanggal_akhir =  params[:posemails][:enddate]
     @end_date =  params[:posemails][:startdate]
     a = params[:posemails][:top10]
+    cond = params[:posemails][:cond]
     if params[:posemails][:enddate].empty?
       @start_date = params[:posemails][:startdate]
     else
@@ -23,9 +24,8 @@ class ReportController < ApplicationController
         {"$match" => {"DateIssued" => {"$gte" => Time.parse(@end_date.to_s), "$lt" =>  Time.parse(@start_date.to_s)}}},
         { "$group" => {
             "_id" => "$Category",
-            "totalPrice" => { "$sum" => "$TotalPrice" },
-            "totalOrdered" => { "$sum" => "$QtyOrdered" },
-            "TotalPriceCOGS" => {"$sum" => "$UnitPrice"}
+            "totalPrice" => { "$sum" => "$#{cond}" },
+            "totalOrdered" => { "$sum" => "$QtyOrdered" }
         }},
         { "$sort" => { "totalPrice" => -1 } },
         {"$limit" => a.to_i}
@@ -33,6 +33,18 @@ class ReportController < ApplicationController
 
     @end_date = @end_date.to_date.strftime("%d %b %Y")
     @start_date = @start_date.to_date.strftime("%d %b %Y")
+    cond
+    @kondisi = ""
+    cond.split("").each do |m| 
+      if m == "C"
+        @kondisi << " "
+      end
+      if m != "l" 
+        @kondisi << m 
+      else
+       @kondisi << "l " 
+      end 
+    end
 
     render 'vsales'
   end
@@ -50,6 +62,7 @@ class ReportController < ApplicationController
     else
       @kategori = params[:posemails][:category]
     end
+    cond = params[:posemails][:cond]
 
     @start_date = params[:posemails][:startdate]
     @end_date = params[:posemails][:enddate]
@@ -65,7 +78,7 @@ class ReportController < ApplicationController
         {"$match" => {"DateIssued" => {"$gte" => Time.parse(@start_date.to_s), "$lt" =>  Time.parse(@end_date.to_s)}}},
         { "$group" => {
             "_id" => "$ShortDesc",
-            "totalUsed" => { "$sum" => "$TotalPrice" },
+            "totalUsed" => { "$sum" => "$#{cond}" },
             "totalOrdered" => { "$sum" => "$QtyOrdered" }
         }},
         { "$sort" => { "totalUsed" => -1 } },
@@ -88,6 +101,18 @@ class ReportController < ApplicationController
 
     @end_date = @end_date.to_date.strftime("%d %b %Y")
     @start_date = @start_date.to_date.strftime("%d %b %Y")
+    cond
+    @kondisi = ""
+    cond.split("").each do |m| 
+      if m == "C"
+        @kondisi << " "
+      end
+      if m != "l" 
+        @kondisi << m 
+      else
+       @kondisi << "l " 
+      end 
+    end
     render 'vsales_product'
   end
 
@@ -121,12 +146,12 @@ class ReportController < ApplicationController
     else
       @start_date = params[:posemails][:enddate]
     end
-
+    cond = params[:posemails][:cond]
     @vsbloc = Vsale.collection.aggregate([
         {"$match" => {"DateIssued" => {"$gte" => Time.parse(@end_date.to_s), "$lt" =>  Time.parse(@start_date.to_s)}}},
         { "$group" => {
             "_id" => "$OrgName",
-            "totalPrice" => { "$sum" => "$TotalPrice" }
+            "totalPrice" => { "$sum" => "$#{cond}" }
         }},
         { "$sort" => { "totalPrice" => -1 } },
         {"$limit" => a.to_i}
@@ -134,6 +159,18 @@ class ReportController < ApplicationController
 
     @end_date = @end_date.to_date.strftime("%d %b %Y")
     @start_date = @start_date.to_date.strftime("%d %b %Y")
+    cond
+    @kondisi = ""
+    cond.split("").each do |m| 
+      if m == "C"
+        @kondisi << " "
+      end
+      if m != "l" 
+        @kondisi << m 
+      else
+       @kondisi << "l " 
+      end 
+    end
 
     render 'vsales_loc'
   end

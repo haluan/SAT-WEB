@@ -4,7 +4,7 @@ class GeneratorController < ApplicationController
   	# POSEMAIL
 
   	@dateLast_db = "SELECT TOP 1 CAST (DateReceived as Date) FROM dbo.tPOSReceive rec order by DateReceived desc;"
-	clients2 = TinyTds::Client.new(:username => 'sa', :password => 'Isjs3cr3t', :host => '192.168.1.119', :port => '1433', :database => 'SAT_NEW')
+	clients2 = TinyTds::Client.new(:username => 'sa', :password => 'z', :host => 'HALUAN-ISJ', :port => '1433', :database => 'SAT_NEW')
 	date = clients2.execute(@dateLast_db)
 	@date_last_db = date.first[""].to_s
 	
@@ -18,7 +18,7 @@ class GeneratorController < ApplicationController
 
 	#VSALES
 	@VdateLast_db = "SELECT TOP 1 CAST (DateIssued as Date) FROM vSAles rec order by DateIssued desc;"
-	clients3 = TinyTds::Client.new(:username => 'sa', :password => 'Isjs3cr3t', :host => '192.168.1.119', :port => '1433', :database => 'SAT_NEW', timeout: 999)
+	clients3 = TinyTds::Client.new(:username => 'sa', :password => 'z', :host => 'HALUAN-ISJ', :port => '1433', :database => 'SAT_NEW', timeout: 999)
 	
 	dateRed = clients3.execute(@VdateLast_db)
 
@@ -46,7 +46,7 @@ class GeneratorController < ApplicationController
   def posemail
 
   	@dateLast_db = "SELECT TOP 1 CAST (DateReceived as Date) FROM dbo.tPOSReceive rec order by DateReceived desc;"
-	clients2 = TinyTds::Client.new(:username => 'sa', :password => 'Isjs3cr3t', :host => '192.168.1.119', :port => '1433', :database => 'SAT_NEW')
+	clients2 = TinyTds::Client.new(:username => 'sa', :password => 'z', :host => 'HALUAN-ISJ', :port => '1433', :database => 'SAT_NEW')
 	date = clients2.execute(@dateLast_db)
 	@date_last_db = date.first[""].to_s
 
@@ -64,7 +64,7 @@ class GeneratorController < ApplicationController
   	end
 
   	
-  	clients1 = TinyTds::Client.new(:username => 'sa', :password => 'Isjs3cr3t', :host => '192.168.1.119', :port => '1433', :database => 'SAT_NEW')
+  	clients1 = TinyTds::Client.new(:username => 'sa', :password => 'z', :host => 'HALUAN-ISJ', :port => '1433', :database => 'SAT_NEW')
 	sum = clients1.execute(@sql_all)
 	@long = sum.first[""].to_i
 	
@@ -123,7 +123,7 @@ class GeneratorController < ApplicationController
 			 	@sql += "and CAST (EmailData.DateReceived as DATE) < '2013-08-20'"
 			 end
 	  
-			clients = TinyTds::Client.new(:username => 'sa', :password => 'Isjs3cr3t', :host => '192.168.1.119', :port => '1433', :database => 'SAT_NEW', timeout: 9999990)
+			clients = TinyTds::Client.new(:username => 'sa', :password => 'z', :host => 'HALUAN-ISJ', :port => '1433', :database => 'SAT_NEW', timeout: 9999990)
 			@data = clients.execute(@sql)
 				@data.each do |data|
 					posemail = Posemail.new 
@@ -156,7 +156,7 @@ class GeneratorController < ApplicationController
   def vsales
   	
   	@dateLast_db = "select TOP 1 * from vSales order by DateIssued desc;"
-	clients2 = TinyTds::Client.new(:username => 'sa', :password => 'Isjs3cr3t', :host => '192.168.1.119', :port => '1433', :database => 'SAT_NEW', timeout: 9999990)
+	clients2 = TinyTds::Client.new(:username => 'sa', :password => 'z', :host => 'HALUAN-ISJ', :port => '1433', :database => 'SAT_NEW', timeout: 9999990)
 	date = clients2.execute(@dateLast_db)
 	@date_last_db = date.first[""].to_s
 
@@ -174,7 +174,7 @@ class GeneratorController < ApplicationController
   		@sql_all = "select count(*) FROM vSales v where CAST (DateIssued as Date) > '#{@last_date}';"
   	end
 
-  	clients1 = TinyTds::Client.new(:username => 'sa', :password => 'Isjs3cr3t', :host => '192.168.1.119', :port => '1433', :database => 'SAT_NEW', timeout: 9999990)
+  	clients1 = TinyTds::Client.new(:username => 'sa', :password => 'z', :host => 'HALUAN-ISJ', :port => '1433', :database => 'SAT_NEW', timeout: 9999990)
 	sum = clients1.execute(@sql_all)
 	@long = sum.first[""].to_i
 	
@@ -202,7 +202,7 @@ class GeneratorController < ApplicationController
 	 				@temp+
 	 				" SELECT * from PENJUALAN WHERE   RowNum BETWEEN #{atas} AND #{bawah}  ORDER BY DateIssued asc"
 			
-			clients = TinyTds::Client.new(:username => 'sa', :password => 'Isjs3cr3t', :host => '192.168.1.119', :port => '1433', :database => 'SAT_NEW', timeout: 9999990)
+			clients = TinyTds::Client.new(:username => 'sa', :password => 'z', :host => 'HALUAN-ISJ', :port => '1433', :database => 'SAT_NEW', timeout: 9999990)
 			@data = clients.execute(sql) 
 			@data.each do |data|
 					vsale = Vsale.new
