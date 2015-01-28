@@ -12,8 +12,11 @@ class ReportController < ApplicationController
     @tanggal_awal =  params[:posemails][:startdate]
     @tanggal_akhir =  params[:posemails][:enddate]
     @end_date =  params[:posemails][:startdate]
+
     a = params[:posemails][:top10]
+    
     cond = params[:posemails][:cond]
+    
     if params[:posemails][:enddate].empty?
       @start_date = params[:posemails][:startdate]
     else

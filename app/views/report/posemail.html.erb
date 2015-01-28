@@ -1,3 +1,7 @@
+<h2>
+	Posemail Report
+</h2>
+<hr>
 <%= form_for(:posemails, url: posemailchoice_path, html: {method: 'get'}) do |f| %>
  <label>* Org..</label> <%= f.select :orgnama, organisasi_choice, {include_blank: '---all---'} %>
  <label>* Start Date</label> <input id="datetimepicker1" name="posemails[startdate]" type="text" data-date-format="YYYY/MM/DD">
@@ -13,9 +17,9 @@
 <table class="table table-responsive table-hover">
 <thead>
 	<tr>
-		<th>Tanggal</th>
-		<th>Terproses</th>
-		<th>Blm. Diproses</th>
+		<th>Date</th>
+		<th>Processed</th>
+		<th>Not Processed</th>
 		<th>Total</th>
 	</tr>
 </thead>

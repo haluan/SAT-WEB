@@ -49,7 +49,7 @@
         <div class="navbar-collapse collapse navbar-responsive-collapse">
           <ul class="nav navbar-nav">
             <li role="presentation" class="dropdown">
-              <a class="dropdown-toggle" style="color: white;" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+              <a id="jamuran" class="dropdown-toggle" style="color: white;" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
                 Sales Report <span class="caret"></span>
               </a>
               <ul class="dropdown-menu" role="menu">
@@ -91,6 +91,15 @@
       </footer>
 
     </div> <!-- /container -->
+    <script type="text/javascript">
+    $("#jamuran").click(function(){
+      $("#jamuran").css("color", "#CF000F");
+    });
+    $("#jamuran").focusout(function(){
+      $("#jamuran").css("color", "white");
+    });
+     
+    </script>
 
   </body>
 </html>
